@@ -1,11 +1,13 @@
 import os
 import sys
+import datetime
 import psycopg2
 import requests
 import json
 from psycopg2.extras import RealDictCursor, Json
 from psycopg2.pool import SimpleConnectionPool
 from flask import Flask, request, jsonify
+from flask.json.provider import DefaultJSONProvider
 from dotenv import load_dotenv
 from functools import wraps
 import logging
@@ -15,9 +17,23 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 # Carrega .env para desenvolvimento local
-load_dotenv() 
+load_dotenv()
+
+
+class BRJSONProvider(DefaultJSONProvider):
+    # Flask 3.0 serializa datetime como RFC 2822 UTC ("Thu, 25 Jun 2026 02:30:15 GMT").
+    # isoformat() preserva o offset do banco: "2026-06-24T23:30:15.053189-03:00"
+    def default(self, o):
+        if isinstance(o, (datetime.datetime, datetime.date)):
+            return o.isoformat()
+        return super().default(o)
+
 
 app = Flask(__name__)
+app.json_provider_class = BRJSONProvider
+app.json = BRJSONProvider(app)
+# Flask 3.0 escapa caracteres não-ASCII por padrão (á → á). Desativado para respostas legíveis.
+app.json.ensure_ascii = False
 
 # --- Configuração ---
 DATABASE_URL = os.getenv("DATABASE_URL")
