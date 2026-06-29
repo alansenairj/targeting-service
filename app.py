@@ -51,23 +51,6 @@ except psycopg2.OperationalError as e:
     log.critical(f"Erro fatal ao conectar ao PostgreSQL: {e}")
     sys.exit(1)
 
-# --- Aplica o schema do banco de dados no Dockerfile ---
-_schema_path = os.path.join(os.path.dirname(__file__), 'db', 'init.sql')
-try:
-    with open(_schema_path) as f:
-        _schema_sql = f.read()
-    _conn = pool.getconn()
-    try:
-        with _conn.cursor() as _cur:
-            _cur.execute(_schema_sql)
-        _conn.commit()
-        log.info("Schema aplicado com sucesso.")
-    finally:
-        pool.putconn(_conn)
-except Exception as e:
-    log.critical(f"Falha ao aplicar schema: {e}")
-    sys.exit(1)
-
 # --- Middleware de Autenticação (Idêntico ao flag-service) ---
 def require_auth(f):
     """ Middleware para validar a chave de API contra o auth-service """
