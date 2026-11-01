@@ -12,7 +12,7 @@ RUN apt-get update && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=builder /app/.venv /app/.venv
-COPY app.py .
+COPY app.py telemetry.py ./
 COPY db/init.sql .
 COPY entrypoint.sh .
 RUN chmod +x ./entrypoint.sh

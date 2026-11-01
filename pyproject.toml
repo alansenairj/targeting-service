@@ -9,4 +9,10 @@ dependencies = [
     "gunicorn==22.0.0",
     "python-dotenv==0.21.0",
     "requests==2.28.1",
+    "opentelemetry-sdk>=1.45.2",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.45.2",
+    "opentelemetry-instrumentation-flask>=0.66b2",
+    "opentelemetry-instrumentation-logging>=0.66b2",
+    "opentelemetry-instrumentation-requests>=0.66b2",
+    "opentelemetry-instrumentation-psycopg2>=0.66b2",
 ]
